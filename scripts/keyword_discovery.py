@@ -52,34 +52,75 @@ def reddit_hot(subreddit: str, limit: int = 20) -> list[str]:
         return []
 
 
-def score_and_classify(keyword: str, niche_cfg: dict) -> dict:
-    kw = keyword.lower()
-    score = 5
-    if "best " in kw: score += 3
-    if " review" in kw: score += 3
-    if " vs " in kw: score += 3
-    if "buy" in kw or "price" in kw: score += 2
-    if "alternative" in kw: score += 2
-    if re.search(r"\b\d{4}\b", kw): score += 1
-    if "how to" in kw: score += 1
-    if "reddit" in kw: score += 1
+# Head/brand terms a brand-new, low-authority domain cannot rank for. These
+# are pushed to the bottom so daily auto-publish stops wasting posts on them.
+_BRAND_SERP_TERMS = (
+    "wirecutter", "amazon", "consumer reports", "nyt", "new york times",
+    "forbes", "cnet", "reviews.com", "good housekeeping",
+)
+_QUESTION_STARTS = ("how ", "why ", "what ", "when ", "is ", "are ", "does ",
+                    "do ", "can ", "should ", "will ", "which ")
 
-    if "best " in kw or " review" in kw or " vs " in kw:
+
+def _pick_category(kw: str, niche_cfg: dict) -> str:
+    cats = niche_cfg["categories"]
+    cat_map = niche_cfg.get("keyword_to_category", {})
+    for hint, cat in cat_map.items():
+        if hint in kw:
+            return cat
+    return cats[0]
+
+
+def score_and_classify(keyword: str, niche_cfg: dict) -> dict:
+    """Score a keyword for PUBLISH PRIORITY on a low-authority site.
+
+    Strategy: reward specific long-tail questions/problems (rankable), penalize
+    bare head terms and brand-owned SERPs (unwinnable). Higher score = published
+    sooner by batch.py.
+    """
+    kw = keyword.lower().strip()
+    words = kw.split()
+    wc = len(words)
+    score = 5
+
+    # Brand-owned SERP -> effectively un-rankable for a new site: bottom it.
+    if any(t in kw for t in _BRAND_SERP_TERMS):
+        return {"score": 1, "type": "affiliate",
+                "category": _pick_category(kw, niche_cfg)}
+
+    # Long-tail specificity is the main ranking lever for a small site.
+    if wc >= 7: score += 5
+    elif wc >= 5: score += 3
+    elif wc >= 4: score += 1
+
+    # Question / problem intent (great for featured snippets + AI answers).
+    if kw.startswith(_QUESTION_STARTS): score += 3
+    # Specific qualifiers that narrow the SERP in our favor.
+    if " for " in f" {kw} ": score += 1
+    if any(t in kw for t in ("every night", "at night", "without", "vs ",
+                             "at 3am", "in the middle of the night",
+                             "after", "before bed")): score += 1
+
+    # Mild commercial signals (affiliate value) — small, not dominant.
+    if "buy" in kw or "price" in kw or "worth it" in kw: score += 1
+
+    # Penalize bare head terms: "best pillow", "oura ring review" (<= 3 words).
+    head = (kw.startswith("best ") or kw.endswith(" review")
+            or kw.endswith(" reviews"))
+    if head and wc <= 3:
+        score = min(score, 2)
+
+    score = max(1, min(score, 14))  # curated long-tail (>=15) still ranks above
+
+    if head or " vs " in kw or "worth it" in kw:
         type_ = "affiliate"
-    elif kw.startswith(("how ", "what ", "why ", "when ")):
+    elif kw.startswith(_QUESTION_STARTS):
         type_ = "adsense"
     else:
         type_ = "informational"
 
-    cats = niche_cfg["categories"]
-    cat_map = niche_cfg.get("keyword_to_category", {})
-    category = cats[0]
-    for hint, cat in cat_map.items():
-        if hint in kw:
-            category = cat
-            break
-
-    return {"score": score, "type": type_, "category": category}
+    return {"score": score, "type": type_,
+            "category": _pick_category(kw, niche_cfg)}
 
 
 def discover(site_slug: str, limit: int = 10) -> int:

@@ -16,6 +16,13 @@ NICHES = {
             ("/best-sleep-tools-and-gadgets-review", "Sleep Tools Review"),
             ("/best-sleep-trackers-comparison-guide", "Sleep Trackers Comparison"),
             ("/best-white-noise-machines-for-sleep", "White Noise Machines"),
+            # Free interactive tools — link to the most relevant one to boost
+            # engagement and keep readers on-site (helps rankings + affiliate).
+            ("/sleep-calculator", "Sleep Calculator (bedtime/wake time)"),
+            ("/caffeine-calculator", "Caffeine Cutoff Calculator"),
+            ("/nap-calculator", "Nap Calculator"),
+            ("/sleep-quiz", "Sleep Quiz"),
+            ("/sleep-sounds", "White/Pink/Brown Noise Player"),
         ],
         "seed_keywords": [
             "best sleep tracker", "best sleep mask", "best white noise machine",
@@ -29,13 +36,16 @@ NICHES = {
             "sleep cycles explained", "rem sleep", "deep sleep",
             "sleep hygiene", "circadian rhythm",
         ],
-        "modifiers": ["", "2026", "reddit", "for adults", "for side sleepers",
-                      "for anxiety", "natural", "how to use", "what is",
-                      "why does", "how long", "side effects of"],
+        # Long-tail-oriented modifiers: these pull question-shaped, specific
+        # autocomplete suggestions a new site can actually rank for, instead of
+        # head terms owned by Wirecutter/Healthline.
+        "modifiers": ["how to", "why do i", "how long before bed", "is it bad to",
+                      "best time to take", "does", "for anxiety", "without",
+                      "every night", "at night", "naturally", "vs"],
         "subreddits": ["sleep", "biohackers", "insomnia"],
         "image_query_template": "{keyword} bedroom sleep",
         "image_fallback_queries": ["bedroom interior", "peaceful sleep", "minimalist bedroom"],
-        "voice": "Expert sleep writer. Conversational tone. Current-year prices and product versions. Short paragraphs. Cite Reddit when used.",
+        "voice": "Expert sleep writer. Conversational, plain, honest. Front-load a direct answer to the title question in the first 2 sentences (for featured snippets and AI answers). Current-year prices and product versions. Short paragraphs. Never fabricate quotes or stats.",
     },
 
     "trading": {

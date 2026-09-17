@@ -38,9 +38,14 @@ CATEGORY: {category}
 NICHE: {niche_cfg["site_slug"]}
 
 STRUCTURE (1800-2200 words):
-1. Opening hook with keyword (100 words)
-2. Quick verdict / TL;DR (100 words)
-3. 4-6 H2 sections (300-400 words each, distinct angles)
+1. Opening hook with keyword (60-90 words)
+2. DIRECT ANSWER (featured-snippet bait): immediately after the hook, answer
+   the exact question/keyword in 40-60 words, plain and self-contained, so
+   Google and AI answer engines can lift it verbatim. If the keyword is a
+   question, the first sentence of this block restates and answers it. Put a
+   short bold lead-in like "**Short answer:**" at the start.
+3. 4-6 H2 sections (300-400 words each, distinct angles). Use real questions
+   people also ask as some of the H2s.
 4. Comparison table if products
 5. FAQ block: a heading written exactly as "## Frequently Asked Questions",
    then 4-5 Q&A pairs. Each question MUST be a single fully-bold line in the
@@ -78,7 +83,12 @@ REQUIREMENTS:
   "it's worth noting", "navigate the complex landscape", "in today's
   fast-paced world", "unlock", "seamless", "robust". Write plainly, like a
   knowledgeable person who actually tested the products, not a press release.
-- 2-3 internal links from this list (markdown format):
+- The SEO title MUST keep the exact wording of the KEYWORD when it is a
+  question or specific phrase (e.g. keyword "why do i wake up at 3am every
+  night" -> title starts "Why Do I Wake Up at 3AM Every Night? ..."). Do not
+  generalize it into a head term. This is how it matches the search.
+- 2-3 internal links from this list (markdown format). Include at least ONE
+  link to a relevant free tool (calculator/quiz/sounds) when it fits the topic:
 {pillars_block}
 - Voice: {niche_cfg["voice"]}
 
